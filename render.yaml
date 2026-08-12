@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: darkx-bot-builder
+    env: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: PAYMENT_NUMBER
+        value: "0775710774"
+      - key: PAYMENT_NAME
+        value: "JAMILA"
+      - key: DEFAULT_MULTI_SESSIONS
+        value: "5"
