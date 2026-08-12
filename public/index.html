@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DarkX Bot Builder</title>
+<link rel="icon" href="https://files.catbox.moe/pc5uec.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Share Tech Mono', 'Segoe UI', Tahoma, sans-serif; }
+  html, body { height: 100%; }
+  h1, h2, h3, .brand-font, .tab-btn, button.action, .price-tag { font-family: 'Orbitron', 'Share Tech Mono', sans-serif; }
+
+  :root {
+    --bg: #eefcff; --text: #0b1418; --muted: #5c8892; --card-bg: #ffffff;
+    --border: #dcf1f5; --input-bg: #f2fdff; --shadow: rgba(0,229,255,0.08);
+  }
+  [data-theme="dark"] {
+    --bg: #05080a; --text: #eafeff; --muted: #6fb3c4; --card-bg: #0c1416;
+    --border: #143139; --input-bg: #0e1a1d; --shadow: rgba(0,0,0,0.35);
+  }
+
+  body {
+    min-height: 100vh; background: var(--bg); color: var(--text);
+    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 42px 42px; background-attachment: fixed;
+  }
+  [data-theme="dark"] body {
+    background-image: linear-gradient(rgba(0,229,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.06) 1px, transparent 1px);
+    background-size: 42px 42px;
+  }
+
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px; border-bottom: 1px solid var(--border);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand img { width: 34px; height: 34px; border-radius: 8px; }
+  .brand h1 { font-size: 16px; letter-spacing: 1px; text-transform: uppercase; }
+  .brand span { display: block; font-size: 10px; color: var(--muted); }
+  .theme-btn {
+    background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px;
+    padding: 8px 12px; cursor: pointer; color: var(--text); font-size: 14px;
+  }
+
+  .hero { text-align: center; padding: 44px 20px 8px; }
+  .hero h2 { font-size: 28px; letter-spacing: 1px; text-transform: uppercase; background: linear-gradient(135deg, #0072ff, #00e5ff); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 10px; }
+  .hero p { color: var(--muted); font-size: 14px; max-width: 560px; margin: 0 auto; line-height: 1.6; }
+
+  .layout { max-width: 640px; margin: 0 auto; padding: 30px 16px 80px; }
+  .card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px;
+    padding: 26px 24px; box-shadow: 0 20px 50px var(--shadow);
+  }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 22px; background: var(--input-bg); padding: 6px; border-radius: 14px; }
+  .tab-btn {
+    flex: 1; padding: 12px; border: none; background: transparent; border-radius: 10px;
+    cursor: pointer; color: var(--muted); font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .tab-btn.active { background: linear-gradient(135deg, #00e5ff, #0072ff); color: #fff; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  label { display: block; font-size: 12px; color: var(--muted); margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  input[type=text], input[type=password], textarea {
+    width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border);
+    background: var(--input-bg); color: var(--text); font-size: 14px; outline: none;
+  }
+  input[type=file] { width: 100%; padding: 10px 0; color: var(--text); }
+  textarea { resize: vertical; min-height: 70px; }
+
+  button.action {
+    width: 100%; margin-top: 20px; padding: 14px; border: none; border-radius: 12px;
+    background: linear-gradient(135deg, #00e5ff, #0072ff); color: #fff; font-size: 13px;
+    letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+  }
+  button.action:disabled { opacity: 0.6; cursor: not-allowed; }
+  button.action.secondary { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
+
+  #status-box, #multi-status-box { margin-top: 14px; font-size: 13px; color: var(--muted); text-align: center; min-height: 18px; }
+
+  .price-tag {
+    text-align: center; font-size: 26px; color: #00e5ff; margin: 6px 0 4px;
+  }
+  .price-sub { text-align: center; color: var(--muted); font-size: 12px; margin-bottom: 18px; }
+
+  .ussd-box {
+    background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px;
+    padding: 16px 18px; margin: 14px 0; font-size: 13px; line-height: 1.7;
+  }
+  .ussd-box b { color: #0e7490; }
+  [data-theme="dark"] .ussd-box b { color: #5be0ff; }
+  .ussd-box ol { padding-left: 18px; margin: 8px 0; }
+
+  .info-box {
+    background: var(--input-bg); border: 1px dashed var(--border); border-radius: 12px;
+    padding: 12px 14px; font-size: 12px; color: var(--muted); margin: 12px 0; line-height: 1.5;
+  }
+
+  .footer-note { text-align: center; color: var(--muted); font-size: 11px; margin-top: 26px; }
+  .admin-hint { text-align: center; margin-top: 10px; }
+  .admin-hint a { color: var(--muted); font-size: 11px; text-decoration: none; }
+
+  .download-box {
+    text-align: center; padding: 20px; background: var(--input-bg); border-radius: 14px; margin-top: 16px;
+  }
+  .download-box a {
+    display: inline-block; margin-top: 10px; padding: 12px 22px; border-radius: 10px;
+    background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; text-decoration: none;
+    font-family: 'Orbitron', sans-serif; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  /* ---- Modal (admin) ---- */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(2,10,12,0.6);
+    align-items: center; justify-content: center; z-index: 999; padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-box {
+    background: var(--card-bg); border-radius: 18px; padding: 24px; width: 100%;
+    max-width: 720px; max-height: 86vh; overflow-y: auto; border: 1px solid var(--border);
+  }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .link-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 12px; text-decoration: underline; }
+
+  .order-item {
+    border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 12px; background: var(--input-bg);
+  }
+  .order-item img { width: 100%; max-width: 220px; border-radius: 10px; margin: 8px 0; display: block; }
+  .order-item .row { font-size: 12px; margin-bottom: 4px; }
+  .order-item .row b { color: var(--text); }
+  .order-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .order-actions button {
+    flex: 1; padding: 9px; border-radius: 8px; border: none; cursor: pointer; font-size: 12px;
+    font-family: 'Orbitron', sans-serif; text-transform: uppercase;
+  }
+  .btn-approve { background: #16a34a; color: #fff; }
+  .btn-reject { background: #ef4444; color: #fff; }
+  .badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 10px; text-transform: uppercase; }
+  .badge.pending { background: #f59e0b; color: #fff; }
+  .badge.approved { background: #16a34a; color: #fff; }
+  .badge.rejected { background: #ef4444; color: #fff; }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="brand">
+      <img src="https://files.catbox.moe/pc5uec.png" alt="logo" />
+      <div><h1>DarkX Bot Builder</h1><span>Generate your own WhatsApp bot</span></div>
+    </div>
+    <button class="theme-btn" id="theme-toggle-btn"><span id="theme-icon">🌙</span></button>
+  </div>
+
+  <div class="hero">
+    <h2>Build Your Own Bot</h2>
+    <p>Fill in your details, then download a ready-to-run WhatsApp bot (.ping · .play · .vv2) — configured just for you.</p>
+  </div>
+
+  <div class="layout">
+    <div class="card">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="single">Single Session (Free)</button>
+        <button class="tab-btn" data-tab="multi">Multi Session</button>
+      </div>
+
+      <!-- SINGLE SESSION -->
+      <div class="panel active" id="panel-single">
+        <div class="info-box">Free forever — supports 1 linked WhatsApp number.</div>
+
+        <label>Bot Name</label>
+        <input type="text" id="s-botName" placeholder="e.g. My Bot" />
+
+        <label>Owner Name</label>
+        <input type="text" id="s-ownerName" placeholder="Your name" />
+
+        <label>Owner WhatsApp Number</label>
+        <input type="text" id="s-ownerNumber" placeholder="e.g. 2557XXXXXXXX" />
+
+        <label>MongoDB Connection String</label>
+        <input type="text" id="s-mongoUri" placeholder="mongodb+srv://user:pass@cluster.mongodb.net/mydb" />
+        <div class="info-box">Don't have one? Create a free cluster at MongoDB Atlas (mongodb.com/atlas) and paste the connection string here.</div>
+
+        <label>Command Prefix (optional)</label>
+        <input type="text" id="s-prefix" placeholder="." maxlength="2" />
+
+        <button class="action" id="single-generate-btn">⚡ Generate & Download</button>
+        <div id="status-box"></div>
+      </div>
+
+      <!-- MULTI SESSION -->
+      <div class="panel" id="panel-multi">
+        <div class="price-tag" id="price-tag">35,000 TZS</div>
+        <div class="price-sub">One-time payment · supports multiple linked WhatsApp numbers</div>
+
+        <label>Bot Name</label>
+        <input type="text" id="m-botName" placeholder="e.g. My Bot" />
+
+        <label>Owner Name</label>
+        <input type="text" id="m-ownerName" placeholder="Your name" />
+
+        <label>Owner WhatsApp Number</label>
+        <input type="text" id="m-ownerNumber" placeholder="e.g. 2557XXXXXXXX" />
+
+        <label>MongoDB Connection String</label>
+        <input type="text" id="m-mongoUri" placeholder="mongodb+srv://user:pass@cluster.mongodb.net/mydb" />
+
+        <label>Command Prefix (optional)</label>
+        <input type="text" id="m-prefix" placeholder="." maxlength="2" />
+
+        <div class="ussd-box" id="ussd-box">
+          <b>📲 How to Pay</b>
+          <ol>
+            <li>Dial <b>*150*00#</b> (Tigo Pesa) or <b>*150*01#</b> (Halopesa/Yas)</li>
+            <li>Choose <b>Tuma Pesa</b> (Send Money)</li>
+            <li>Send <b id="ussd-amount">35,000 TZS</b> to <b id="ussd-number">...</b>, confirm name <b id="ussd-name">...</b></li>
+            <li>Copy the transaction number (Muamala) from the confirmation SMS</li>
+            <li>Fill the form below and attach a screenshot of the confirmation</li>
+          </ol>
+        </div>
+
+        <label>Phone Number You Paid From</label>
+        <input type="text" id="m-payerNumber" placeholder="e.g. 2557XXXXXXXX" />
+
+        <label>Transaction Number (Muamala)</label>
+        <input type="text" id="m-transactionRef" placeholder="e.g. CEI7X8XXXX" />
+
+        <label>Payment Screenshot / Photo</label>
+        <input type="file" id="m-proof" accept="image/*" />
+
+        <button class="action" id="multi-submit-btn">🚀 Submit for Approval</button>
+        <div id="multi-status-box"></div>
+
+        <div id="multi-download-box" class="download-box" style="display:none;">
+          <div>✅ Approved! Your bot is ready.</div>
+          <a href="#" id="multi-download-link">⬇️ Download Zip</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-note">© 2026 DarkX Bot Builder — Powered by DarkX Mini</div>
+    <div class="admin-hint"><a href="#" id="admin-link">admin</a></div>
+  </div>
+
+  <!-- Admin login modal -->
+  <div id="admin-login-modal" class="modal-overlay">
+    <div class="modal-box" style="max-width:360px;">
+      <h3>🔐 Admin Login</h3>
+      <label>Password</label>
+      <input type="password" id="admin-password" placeholder="Admin password" />
+      <div id="admin-login-error" style="color:#ef4444;font-size:12px;margin-top:8px;"></div>
+      <button class="action" id="admin-login-btn">Login</button>
+      <button class="link-btn" id="admin-login-cancel" style="margin-top:10px;">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Admin dashboard modal -->
+  <div id="admin-dashboard-modal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🛠️ Multi-Session Orders</h3>
+        <button class="link-btn" id="admin-close-btn">Close</button>
+      </div>
+      <div id="admin-orders-list"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
